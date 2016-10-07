@@ -49,6 +49,8 @@ public class SearchOpenCv {
     
     private static Boolean resultState = null;
     
+    private static final String[] PATH_OPEN_CV = { "/usr/share/OpenCV/java", "/usr/lib/jni" };
+
     private SearchOpenCv() {
     }
     
@@ -59,30 +61,32 @@ public class SearchOpenCv {
         resultState = false;
 
         if (OsInfo.getFamily() == Family.UNIX) {
-            File path = new File("/usr/lib/jni");
-            String libOpencv = "";
-            String[] children = !path.exists() ? new String[0] : path.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    boolean ret = name.toLowerCase().startsWith("libopencv_java24");
-                    ret = ret && name.toLowerCase().endsWith(".so");
-                    return ret;
-                }
-            });
-            if (children.length > 0) {
-                String filename = children[0];
-                libOpencv = filename.toString().replaceAll("lib", "").replaceAll(".so", "");
+            for (String pathStr : PATH_OPEN_CV) {
+                File path = new File(pathStr);
+                String libOpencv = "";
+                String[] children = !path.exists() ? new String[0] : path.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        boolean ret = name.toLowerCase().startsWith("libopencv_java24");
+                        ret = ret && name.toLowerCase().endsWith(".so");
+                        return ret;
+                    }
+                });
+                if (children.length > 0) {
+                    String filename = children[0];
+                    libOpencv = filename.toString().replaceAll("lib", "").replaceAll(".so", "");
 
-                try {
-                    System.loadLibrary(libOpencv);
-                    resultState = true;
-                    return true;
-                }
-                catch (Exception e) {
-                    NeptusLog.pub().error("Opencv not found - " + e.getMessage());
-                }
-                catch (Error e) {
-                    NeptusLog.pub().error("Opencv not found - " + e.getMessage());
+                    try {
+                        System.loadLibrary(libOpencv);
+                        resultState = true;
+                        return true;
+                    }
+                    catch (Exception e) {
+                        NeptusLog.pub().error("Opencv not found - " + e.getMessage());
+                    }
+                    catch (Error e) {
+                        NeptusLog.pub().error("Opencv not found - " + e.getMessage());
+                    }
                 }
             }
         }
@@ -113,7 +117,7 @@ public class SearchOpenCv {
             }
         }
         if (!resultState)
-            NeptusLog.pub().error("Opencv not found - please install OpenCv 2.4 and dependencies.");
+            NeptusLog.pub().error("Opencv not found - please install OpenCv 2.4.1[123] and dependencies.");
             
         return resultState;
     }
