@@ -61,7 +61,18 @@ else
   echo "No VTK Java wrappers found"
 fi
 
+if [ -e $(find  /usr/share/OpenCV/java/ -name libopencv_java241[123].so)"" ]; then
+  OPENCV="/usr/share/OpenCV/java"
+  echo "OpenCV Java wrappers found"
+ elif [ -e $(find  /usr/lib/jni/ -name libopencv_java241[123].so)"" ]; then
+  OPENCV="/usr/lib/jni"
+  echo "OpenCV Java wrappers found"
+else
+  OPENCV=
+  echo "No OpenCV Java wrappers found"
+fi
+
 export VMFLAGS="-XX:+HeapDumpOnOutOfMemoryError"
 
 export LD_LIBRARY_PATH=$LIBS:$LD_LIBRARY_PATH
-$JAVA_BIN_FOLDER"java" -Xms10m -Xmx1024m $VMFLAGS -Djava.library.path=$LIBS $VTKPROP -cp $CLASSPATH pt.lsts.neptus.mc.lauvconsole.LAUVConsole "$@"
+$JAVA_BIN_FOLDER"java" -Xms10m -Xmx1024m $VMFLAGS -Djava.library.path=$LIBS:$OPENCV $VTKPROP -Dopencv.lib.dir=$OPENCV -cp $CLASSPATH $DEFAULT "$@"
