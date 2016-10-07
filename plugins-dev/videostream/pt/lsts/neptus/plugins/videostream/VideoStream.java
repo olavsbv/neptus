@@ -447,7 +447,7 @@ public class VideoStream extends ConsolePanel implements ItemListener {
             // JLabel for image
             this.setLayout(new MigLayout("filly"));
             // JLabel info
-            warningText = new JLabel("  " + I18n.text("Please install OpenCV 2.4 and its dependencies.") + "  ");
+            warningText = new JLabel("  " + I18n.text("Please install OpenCv 2.4.1[123] and its dependencies.") + "  ");
             warningText.setForeground(new Color(252, 68, 35));
             warningText.setFont(new Font("Courier New", Font.ITALIC, 18));
             this.add(warningText);
